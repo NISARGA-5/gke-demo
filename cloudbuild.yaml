@@ -1,0 +1,41 @@
+steps:
+
+# Step 1 - Build Docker image
+- name: 'gcr.io/cloud-builders/docker'
+
+  args:
+    - 'build'
+    - '-t'
+    - 'us-central1-docker.pkg.dev/project1-494202/my-repo/node-app:latest'
+    - '.'
+
+# Step 2 - Push Docker image
+- name: 'gcr.io/cloud-builders/docker'
+
+  args:
+    - 'push'
+    - 'us-central1-docker.pkg.dev/project1-494202/my-repo/node-app:latest'
+
+# Step 3 - Deploy to GKE
+- name: 'gcr.io/cloud-builders/kubectl'
+
+  args:
+    - 'apply'
+    - '-f'
+    - 'deployment.yaml'
+
+  env:
+    - 'CLOUDSDK_COMPUTE_REGION=us-central1'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=my-gke-cluster'
+
+# Step 4 - Apply service
+- name: 'gcr.io/cloud-builders/kubectl'
+
+  args:
+    - 'apply'
+    - '-f'
+    - 'service.yaml'
+
+  env:
+    - 'CLOUDSDK_COMPUTE_REGION=us-central1'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=my-gke-cluster'
